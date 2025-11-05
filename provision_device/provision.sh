@@ -4,9 +4,9 @@
 # factory-reset the device before proceeding
 # update MFW
 # install at_client
+# need CA certificate ready (run create_ca_cert)
 
 nrfcredstore auto deleteall
-create_ca_cert
 device_credentials_installer -d --ca *_ca.pem --ca-key *_prv.pem --coap --verify --delete --sectag 2147483650
 nrf_cloud_onboard --api-key $API_KEY_PROD && rm onboard.csv
 device_credentials_installer -d --ca *_ca.pem --ca-key *_prv.pem --coap --verify --delete --stage beta --sectag 2147483651
