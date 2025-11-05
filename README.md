@@ -20,7 +20,7 @@ Various helper scripts can be found in the `scripts` folder. It also contains a 
 The `tests/on_target` folder contains the test setup. It's based on `pytest` and makes use of various helper libraries contained in its `utils` folder.
 For example, flashing DKs is done using `nrfutil-device` and its on-board J-Link, while for Thingys, the included CMSIS-DAP probe is used with `pyocd`.
 
-# Adding a sample
+## Adding a sample
 
 Samples are devided into groups to provide some granularity for running only a subset of tests.
 If you intend to create a new group (e.g. `basic-samples`), just create a new step in the `build.yml` workflow:
@@ -73,7 +73,11 @@ Begin with figuring out what kind of failure you see:
 
 Investigating both the logs in the GitHub actions themselves as well as inside the test reports can prove useful.
 Examining the modem traces can reveal changed behavior as well. Note that modem traces on nRF9160 are not decrypting the TLS traffic.
-Cloud issues can be identified by consistent failures with FW versions that worked before.
-CI/device issues are usually specific to one device or device type. Having multiple devices of the same type can help identifying these.
-SDK issues only happen in specific SDK versions. Bisect if possible to find the offending commit and request help from the author.
-Workflow issues should be identified early when making changes to the workflows here.
+
+*Cloud issues* can be identified by consistent failures with FW versions that worked before.
+
+*CI/device issues* are usually specific to one device or device type. Having multiple devices of the same type can help identifying these.
+
+*SDK issues* only happen in specific SDK versions. Bisect if possible to find the offending commit and request help from the author.
+
+*Workflow issues* should be identified early when making changes to the workflows here.
