@@ -1,4 +1,9 @@
 name: Nightly Tests
+permissions:
+  actions: read
+  contents: read
+  id-token: write  # Only if you use OIDC for authentication
+
 
 on:
   schedule:
