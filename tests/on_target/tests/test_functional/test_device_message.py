@@ -119,7 +119,7 @@ def test_mqtt_device_message(dut_cloud, mqtt_device_message_hex_file):
 
         if messages:
             message_object = messages[0][1]
-            message_content = message_object.get('sample_message', '')
+            message_content = message_object.get('data', '')
 
             if "Hello World, from the MQTT Device Message Sample!" in message_content:
                 break
