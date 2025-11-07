@@ -169,3 +169,7 @@ def rest_fota_test_zip_file():
         if os.path.isfile(potential_path):
             return potential_path
     pytest.skip("ZIP file not found")
+
+@pytest.fixture(scope="session")
+def mqtt_device_message_hex_file():
+    return find_hex_file("nrf_cloud_mqtt_device_message") or pytest.skip("HEX file not found")

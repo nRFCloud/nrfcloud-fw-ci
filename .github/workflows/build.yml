@@ -233,6 +233,27 @@ jobs:
             west build -b nrf9151dk/nrf9151/ns --build-dir $VERSION/nrf9151dk-nrf_cloud_rest_fota_fmfu             nrf/samples/cellular/nrf_cloud_rest_fota            -- -DEXTRA_CONF_FILE="overlay_full_modem_fota.conf;$REST_SERVER_FRAGMENT" -Dnrf_cloud_rest_fota_SNIPPET=nrf91-modem-trace-uart '-DCONFIG_REST_FOTA_SAMPLE_VERSION="1.0.0-fotatest"'
           fi
 
+      - name: Build MQTT samples
+        if: inputs.group == 'mqtt' && steps.cache-check.outputs.cache-hit == 'false'
+        shell: bash
+        run: |
+          # Thingy:91 X
+          if [[ "${{ inputs.device }}" == "thingy91x" ]]; then
+            west build -b thingy91x/nrf9151/ns --build-dir $VERSION/thingy91x-nrf_cloud_mqtt_device_message        nrf/samples/cellular/nrf_cloud_mqtt_device_message  -- -DEXTRA_CONF_FILE=$MQTT_SERVER_FRAGMENT -Dnrf_cloud_mqtt_device_message_SNIPPET=nrf91-modem-trace-uart
+          fi
+          # Thingy:91
+          if [[ "${{ inputs.device }}" == "thingy91" ]]; then
+            west build -b thingy91/nrf9160/ns --build-dir $VERSION/thingy91-nrf_cloud_mqtt_device_message          nrf/samples/cellular/nrf_cloud_mqtt_device_message  -- -DEXTRA_CONF_FILE=$MQTT_SERVER_FRAGMENT -Dnrf_cloud_mqtt_device_message_SNIPPET=nrf91-modem-trace-uart
+          fi
+          # nRF9160-DK
+          if [[ "${{ inputs.device }}" == "nrf9160dk" ]]; then
+            west build -b nrf9160dk/nrf9160/ns --build-dir $VERSION/nrf9160dk-nrf_cloud_mqtt_device_message        nrf/samples/cellular/nrf_cloud_mqtt_device_message  -- -DEXTRA_CONF_FILE=$MQTT_SERVER_FRAGMENT -Dnrf_cloud_mqtt_device_message_SNIPPET=nrf91-modem-trace-uart
+          fi
+          # nRF9151-DK
+          if [[ "${{ inputs.device }}" == "nrf9151dk" ]]; then
+            west build -b nrf9151dk/nrf9151/ns --build-dir $VERSION/nrf9151dk-nrf_cloud_mqtt_device_message        nrf/samples/cellular/nrf_cloud_mqtt_device_message  -- -DEXTRA_CONF_FILE=$MQTT_SERVER_FRAGMENT -Dnrf_cloud_mqtt_device_message_SNIPPET=nrf91-modem-trace-uart
+          fi
+
       - name: Build MSS COAP
         if: inputs.group == 'mss-coap' && steps.cache-check.outputs.cache-hit == 'false'
         shell: bash
