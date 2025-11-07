@@ -81,3 +81,30 @@ Examining the modem traces can reveal changed behavior as well. Note that modem 
 *SDK issues* only happen in specific SDK versions. Bisect if possible to find the offending commit and request help from the author.
 
 *Workflow issues* should be identified early when making changes to the workflows here.
+
+## Running on an SDK PR
+
+Instead of `main` and a specific commit hash, you can specify a ref, like `refs/pull/25462/head`.
+This will run the tests on `https://github.com/nrfconnect/sdk-nrf/pull/25462`.
+
+## Running locally
+
+Sometimes you need to run tests locally to figure out what exactly is happening.
+To do, you will need the build artifact, a python environment and some env. variables:
+
+```bash
+python3 -mvenv tests/on_target/.env
+source tests/on_target/.env/bin/activate
+cd tests/on_target
+export SEGGER=960033027
+export UUID=50343956-3037-4738-800d-1f29e0a0f7bf
+export NRFCLOUD_API_KEY=$API_KEY_PROD
+export LOG_FILENAME=nrfcloud_fw_test_log
+export TEST_REPORT_NAME="Firmware Test Report"
+export ARTIFACT_PATH=$PWD/artifacts/build-b82e6864-a80dbf92c265f5e3ad8e0a474c6dff39bc9dcb14-prod-nrf9151dk-coap
+export ARTIFACT_VERSION=b82e6864-a80dbf92c265f5e3ad8e0a474c6dff39bc9dcb14-prod-nrf9151dk-coap
+export BASEURL=nrfcloud.com
+export RUNNER_DEVICE_TYPE=nrf9151dk
+
+pytest -v --junit-xml=results/test-results.xml --html=results/test-results.html --self-contained-html tests/test_functional
+```
