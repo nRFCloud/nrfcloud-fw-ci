@@ -168,7 +168,6 @@ jobs:
         run: |
           # Thingy:91 X
           if [[ "${{ inputs.device }}" == "thingy91x" ]]; then
-            echo "Building for Thingy:91 X"
             west build -b thingy91x/nrf9151/ns --build-dir $VERSION/thingy91x-nrf_cloud_coap_device_message        nrf/samples/cellular/nrf_cloud_coap_device_message  -- -DEXTRA_CONF_FILE=$COAP_SERVER_FRAGMENT -Dnrf_cloud_coap_device_message_SNIPPET=nrf91-modem-trace-uart
             west build -b thingy91x/nrf9151/ns --build-dir $VERSION/thingy91x-nrf_cloud_coap_cell_location         nrf/samples/cellular/nrf_cloud_coap_cell_location   -- -DEXTRA_CONF_FILE=$COAP_SERVER_FRAGMENT -Dnrf_cloud_coap_cell_location_SNIPPET=nrf91-modem-trace-uart
             west build -b thingy91x/nrf9151/ns --build-dir $VERSION/thingy91x-nrf_cloud_coap_fota                  nrf/samples/cellular/nrf_cloud_coap_fota            -- -DEXTRA_CONF_FILE=$COAP_SERVER_FRAGMENT -Dnrf_cloud_coap_fota_SNIPPET=nrf91-modem-trace-uart
@@ -206,7 +205,6 @@ jobs:
         run: |
           # Thingy:91 X
           if [[ "${{ inputs.device }}" == "thingy91x" ]]; then
-            echo "Building REST samples for Thingy:91 X"
             west build -b thingy91x/nrf9151/ns --build-dir $VERSION/thingy91x-nrf_cloud_rest_device_message        nrf/samples/cellular/nrf_cloud_rest_device_message  -- -DEXTRA_CONF_FILE=$REST_SERVER_FRAGMENT -Dnrf_cloud_rest_device_message_SNIPPET=nrf91-modem-trace-uart
             west build -b thingy91x/nrf9151/ns --build-dir $VERSION/thingy91x-nrf_cloud_rest_cell_location         nrf/samples/cellular/nrf_cloud_rest_cell_location   -- -DEXTRA_CONF_FILE=$REST_SERVER_FRAGMENT -Dnrf_cloud_rest_cell_location_SNIPPET=nrf91-modem-trace-uart
             west build -b thingy91x/nrf9151/ns --build-dir $VERSION/thingy91x-nrf_cloud_rest_fota                  nrf/samples/cellular/nrf_cloud_rest_fota            -- -DEXTRA_CONF_FILE=$REST_SERVER_FRAGMENT -Dnrf_cloud_rest_fota_SNIPPET=nrf91-modem-trace-uart
