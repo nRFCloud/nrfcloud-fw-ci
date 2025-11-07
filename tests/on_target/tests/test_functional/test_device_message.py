@@ -121,7 +121,7 @@ def test_mqtt_device_message(dut_cloud, mqtt_device_message_hex_file):
             message_object = messages[0][1]
             message_content = message_object.get('sample_message', '')
 
-            if "Hello World, from the REST Device Message Sample!" in message_content:
+            if "Hello World, from the MQTT Device Message Sample!" in message_content:
                 break
         else:
             logger.debug("No message with recent timestamp, retrying...")
