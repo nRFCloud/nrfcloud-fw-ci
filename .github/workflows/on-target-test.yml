@@ -232,7 +232,9 @@ jobs:
         id: artifact-report
         with:
           name: test-report-${{ env.ARTIFACT_VERSION }}
+          retention-days: 7
           path: |
+            nrf-cloud-fw-ci/tests/on_target/results/*.xml
             nrf-cloud-fw-ci/tests/on_target/results/*.html
             nrf-cloud-fw-ci/tests/on_target/outcomes/*.gpg
             nrf-cloud-fw-ci/tests/on_target/outcomes/*.txt
