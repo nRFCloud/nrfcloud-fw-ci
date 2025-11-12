@@ -105,6 +105,7 @@ export ARTIFACT_PATH=$PWD/artifacts/build-b82e6864-a80dbf92c265f5e3ad8e0a474c6df
 export ARTIFACT_VERSION=b82e6864-a80dbf92c265f5e3ad8e0a474c6dff39bc9dcb14-prod-nrf9151dk-coap
 export BASEURL=nrfcloud.com
 export RUNNER_DEVICE_TYPE=nrf9151dk
+export STAGE=prod
 
 pytest -v --junit-xml=results/test-results.xml --html=results/test-results.html --self-contained-html tests/test_functional
 ```

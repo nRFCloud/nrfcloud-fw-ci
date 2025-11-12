@@ -19,6 +19,7 @@ DEVICE_UUID = os.getenv('UUID')
 NRFCLOUD_API_KEY = os.getenv('NRFCLOUD_API_KEY')
 RUNNER_DEVICE_TYPE = os.getenv('RUNNER_DEVICE_TYPE')
 ARTIFACT_PATH = os.getenv('ARTIFACT_PATH')
+STAGE = os.getenv('STAGE')
 
 TRACEPORT_INDEX = 1
 
@@ -29,6 +30,9 @@ if RUNNER_DEVICE_TYPE in ["thingy91", "thingy91x"]:
     HEX_FILE_NAME = "zephyr.signed.hex"
 else:
     HEX_FILE_NAME = "merged.hex"
+
+def pytest_itemcollected(item):
+    item._nodeid = f"{RUNNER_DEVICE_TYPE}::{STAGE}::{item._nodeid}"
 
 def get_uarts():
     base_path = "/dev/serial/by-id"
