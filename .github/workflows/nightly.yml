@@ -33,12 +33,6 @@ jobs:
     outputs:
       commit: ${{ steps.get-commit.outputs.commit }}
     steps:
-      - name: Display Run Details
-        run: |
-          echo "# Parameters" >> $GITHUB_STEP_SUMMARY
-          echo "* Stage: ${{ inputs.stage }}" >> $GITHUB_STEP_SUMMARY
-          echo "* Requested NCS Version: ${{ inputs.ncs-commit }}" >> $GITHUB_STEP_SUMMARY
-          echo "* Recover Device: ${{ inputs.recover_device }}" >> $GITHUB_STEP_SUMMARY
       - name: Get latest commit from sdk-nrf
         shell: bash
         id: get-commit
@@ -55,6 +49,12 @@ jobs:
             echo "Using specified commit: ${{ inputs.ncs-commit }}"
           fi
           echo "commit=$COMMIT" >> $GITHUB_OUTPUT
+          # Copy parameters to summary
+          echo "# Parameters" >> $GITHUB_STEP_SUMMARY
+          echo "* Stage: ${{ inputs.stage }}" >> $GITHUB_STEP_SUMMARY
+          echo "* Requested NCS Version: ${{ inputs.ncs-commit }}" >> $GITHUB_STEP_SUMMARY
+          echo "* Recover Device: ${{ inputs.recover_device }}" >> $GITHUB_STEP_SUMMARY
+          echo "* Pytest Marker: ${{ inputs.pytest_marker }}" >> $GITHUB_STEP_SUMMARY
           echo "* Used NCS Commit: $COMMIT" >> $GITHUB_STEP_SUMMARY
 
   on-target-test:
