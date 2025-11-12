@@ -118,7 +118,7 @@ jobs:
           echo ARTIFACT_VERSION=$(basename $PWD | cut -d'-' -f2-6) >> $GITHUB_ENV
 
       - name: Display Run Details
-        if: ${{ github.event_name == 'workflow_dispatch' }}
+        if: ${{ github.event_name == 'workflow_dispatch' && !github.event.workflow }}
         # The serial number is set by a pre-job script in .env file on the local actions-runner directory
         run: |
           echo "# Parameters" >> $GITHUB_STEP_SUMMARY
@@ -218,7 +218,7 @@ jobs:
           done
 
       - name: Results
-        if: ${{ always() && github.event_name == 'workflow_dispatch' }}
+        if: ${{ always() && github.event_name == 'workflow_dispatch' && !github.event.workflow}}
         uses: pmeier/pytest-results-action@v0.7.1
         with:
           path: nrf-cloud-fw-ci/tests/on_target/results/*.xml

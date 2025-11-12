@@ -30,7 +30,7 @@ jobs:
       commit: ${{ steps.get-commit.outputs.commit }}
     steps:
       - name: Display Run Details
-        if: ${{ github.event_name == 'workflow_dispatch' }}
+        if: ${{ github.event_name == 'workflow_dispatch' && !github.event.workflow }}
         # The serial number is set by a pre-job script in .env file on the local actions-runner directory
         run: |
           echo "# Parameters" >> $GITHUB_STEP_SUMMARY
@@ -53,8 +53,10 @@ jobs:
             echo "Using specified commit: ${{ inputs.ncs-commit }}"
           fi
           echo "commit=$COMMIT" >> $GITHUB_OUTPUT
-          echo "* Used NCS Commit: $COMMIT" >> $GITHUB_STEP_SUMMARY
-
+          # only print to summary if triggered by workflow_dispatch
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ] && [ -z "${{ github.event.workflow }}" ]; then
+            echo "* Used NCS Commit: $COMMIT" >> $GITHUB_STEP_SUMMARY
+          fi
 
   on-target-test:
     needs: get-ncs-commit
