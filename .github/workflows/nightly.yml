@@ -53,7 +53,7 @@ jobs:
             echo "Using specified commit: ${{ inputs.ncs-commit }}"
           fi
           echo "commit=$COMMIT" >> $GITHUB_OUTPUT
-          echo "* Used NCS Commit: $COMMIT >> $GITHUB_STEP_SUMMARY
+          echo "* Used NCS Commit: $COMMIT" >> $GITHUB_STEP_SUMMARY
 
 
   on-target-test:
