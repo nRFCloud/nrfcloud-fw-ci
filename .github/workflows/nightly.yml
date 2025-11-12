@@ -22,6 +22,10 @@ on:
         description: 'Recover device before testing'
         default: false
         type: boolean
+      pytest_marker:
+        type: string
+        required: false
+        default: "not slow"
 
 jobs:
   get-ncs-commit:
@@ -68,6 +72,7 @@ jobs:
       recover_device: ${{ inputs.recover_device || false }}
       group: ${{ matrix.group }}
       show_run_details: false
+      pytest_marker: ${{ inputs.pytest_marker }}
     secrets: inherit
 
   create-report:
