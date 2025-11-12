@@ -11,6 +11,7 @@ logger = get_logger()
 CLOUD_TIMEOUT = 60 * 3
 
 @pytest.mark.device_message
+@pytest.mark.coap
 def test_coap_device_message(dut_cloud, coap_device_message_hex_file):
     '''
     Test that verifies that device can connect to nRF Cloud CoAP and send device messages.
@@ -52,6 +53,7 @@ def test_coap_device_message(dut_cloud, coap_device_message_hex_file):
         raise RuntimeError("No new message to cloud observed")
 
 @pytest.mark.device_message
+@pytest.mark.rest
 def test_rest_device_message(dut_cloud, rest_device_message_hex_file):
     '''
     Test that verifies that device can connect to nRF Cloud REST and send device messages.
@@ -92,6 +94,7 @@ def test_rest_device_message(dut_cloud, rest_device_message_hex_file):
         raise RuntimeError("No new message to cloud observed")
 
 @pytest.mark.device_message
+@pytest.mark.mqtt
 def test_mqtt_device_message(dut_cloud, mqtt_device_message_hex_file):
     '''
     Test that verifies that device can connect to nRF Cloud MQTT and send device messages.

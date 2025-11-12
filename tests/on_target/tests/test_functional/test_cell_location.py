@@ -11,6 +11,7 @@ logger = get_logger()
 CLOUD_TIMEOUT = 60 * 3
 
 @pytest.mark.cell_location
+@pytest.mark.coap
 def test_coap_cell_location(dut_cloud, coap_cell_location_hex_file):
     '''
     Test that verifies that device can connect to nRF Cloud CoAP and request cell location.
@@ -45,6 +46,7 @@ def test_coap_cell_location(dut_cloud, coap_cell_location_hex_file):
         raise RuntimeError("No new locations observed")
 
 @pytest.mark.cell_location
+@pytest.mark.rest
 def test_rest_cell_location(dut_cloud, rest_cell_location_hex_file):
     '''
     Test that verifies that device can connect to nRF Cloud and request cell location.
