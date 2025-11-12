@@ -211,9 +211,9 @@ jobs:
           PYTEST_PATH=tests/test_functional
 
           if [[ '${{ inputs.pytest_marker }}' == 'no_markers_flag' || '${{ inputs.pytest_marker }}' == '' ]]; then
-            pytest_marker_arg=()
+            pytest_marker=()
           else
-            pytest_marker_arg=(-m "${{ inputs.pytest_marker }}")
+            pytest_marker=(-m "${{ inputs.pytest_marker }}")
           fi
 
           pytest -v "${pytest_marker[@]}" \
