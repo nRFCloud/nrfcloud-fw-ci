@@ -218,7 +218,7 @@ jobs:
           done
 
       - name: Results
-        if: always()
+        if: ${{ always() && github.event_name == 'workflow_dispatch' }}
         uses: pmeier/pytest-results-action@v0.7.1
         with:
           path: nrf-cloud-fw-ci/tests/on_target/results/*.xml
