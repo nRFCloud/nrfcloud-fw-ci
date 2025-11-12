@@ -33,11 +33,10 @@ on:
         required: true
         default: 'coap'
         type: string
-      test_all:
-        description: Run all tests
-        type: boolean
+      pytest_marker:
+        type: string
         required: false
-        default: false
+        default: "not slow"
   workflow_dispatch:
     inputs:
       stage:
@@ -65,11 +64,10 @@ on:
         required: true
         default: 'coap'
         type: string
-      test_all:
-        description: Run all tests
-        type: boolean
+      pytest_marker:
+        type: string
         required: false
-        default: false
+        default: "not slow"
 
 jobs:
   build:
@@ -200,10 +198,10 @@ jobs:
           mkdir -p outcomes
           PYTEST_PATH=tests/test_functional
 
-          if [[ ${{ inputs.test_all }} == true ]]; then
-            pytest_marker=()
+          if [[ '${{ inputs.pytest_marker }}' == 'no_markers_flag' || '${{ inputs.pytest_marker }}' == '' ]]; then
+            pytest_marker_arg=()
           else
-            pytest_marker=(-m "not slow")
+            pytest_marker_arg=(-m "${{ inputs.pytest_marker }}")
           fi
 
           pytest -v "${pytest_marker[@]}" \
