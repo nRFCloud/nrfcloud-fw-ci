@@ -52,7 +52,7 @@ jobs:
             COMMIT=${{ inputs.ncs-commit }}
             echo "Using specified commit: ${{ inputs.ncs-commit }}"
           fi
-          echo "commit=${{ inputs.ncs-commit }}" >> $GITHUB_OUTPUT
+          echo "commit=$COMMIT" >> $GITHUB_OUTPUT
           echo "* Used NCS Commit: $COMMIT >> $GITHUB_STEP_SUMMARY
 
 
