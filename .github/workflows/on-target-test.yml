@@ -138,7 +138,7 @@ jobs:
           echo "* Device: ${{ inputs.device }}" >> $GITHUB_STEP_SUMMARY
           echo "* Recover Device: ${{ inputs.recover_device }}" >> $GITHUB_STEP_SUMMARY
           echo "* Test Group: ${{ inputs.group }}" >> $GITHUB_STEP_SUMMARY
-          echo "* Pytest Marker: ${{ inputs.pytest_marker }}" >> $GITHUB_STEP
+          echo "* Pytest Marker: ${{ inputs.pytest_marker }}" >> $GITHUB_STEP_SUMMARY
 
       - name: Install dependencies
         working-directory: nrf-cloud-fw-ci
