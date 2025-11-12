@@ -102,7 +102,7 @@ def perform_any_fota(dut_fota, bundle_id, timeout=CLOUD_TIMEOUT):
         dut_fota.data['job_id'] = dut_fota.fota.create_fota_job(dut_fota.device_id, bundle_id)
         dut_fota.data['bundle_id'] = bundle_id
     except Exception as e:
-        pytest.skip(f"FOTA create_job REST API error: {e}")
+        pytest.fail(f"FOTA create_job REST API error: {e}")
     logger.info(f"Created FOTA Job (ID: {dut_fota.data['job_id']})")
 
     logger.info("Waiting for FOTA to start...")
