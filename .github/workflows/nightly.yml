@@ -46,6 +46,15 @@ jobs:
             echo "Using specified commit: ${{ inputs.ncs-commit }}"
             echo "commit=${{ inputs.ncs-commit }}" >> $GITHUB_OUTPUT
           fi
+      - name: Display Run Details
+        if: github.event_name == 'workflow_dispatch' }}
+        # The serial number is set by a pre-job script in .env file on the local actions-runner directory
+        run: |
+          echo "# Parameters" >> $GITHUB_STEP_SUMMARY
+          echo "* Stage: ${{ inputs.stage }}" >> $GITHUB_STEP_SUMMARY
+          echo "* Requested NCS Version: ${{ inputs.ncs-commit }}" >> $GITHUB_STEP_SUMMARY
+          echo "* Used NCS Commit: ${{ outputs.commit }}" >> $GITHUB_STEP_SUMMARY
+          echo "* Recover Device: ${{ inputs.recover_device }}" >> $GITHUB_STEP_SUMMARY
 
   on-target-test:
     needs: get-ncs-commit
@@ -62,3 +71,63 @@ jobs:
       recover_device: ${{ inputs.recover_device || false }}
       group: ${{ matrix.group }}
     secrets: inherit
+
+  create-report:
+    needs: on-target-test
+    runs-on: ubuntu-24.04
+    if: always()
+    steps:
+      - name: Download all test reports
+        uses: actions/download-artifact@v4
+        with:
+          pattern: test-report-*
+          path: test-reports
+
+      - name: Collect and rename test results
+        run: |
+          mkdir -p combined-results
+
+          # List downloaded artifacts structure for debugging
+          echo "Downloaded artifacts structure:"
+          ls -la test-reports/
+
+          # Find all test-results.xml files and rename them based on their artifact name
+          for artifact_dir in test-reports/test-report-*; do
+            if [ -d "$artifact_dir" ]; then
+              artifact_name=$(basename "$artifact_dir")
+              xml_file="$artifact_dir/results/test-results.xml"
+              html_file="$artifact_dir/results/test-results.html"
+
+              if [ -f "$xml_file" ]; then
+                # Copy with renamed file based on artifact name
+                cp "$xml_file" "combined-results/${artifact_name}.xml"
+                echo "Copied: $xml_file -> combined-results/${artifact_name}.xml"
+              else
+                echo "Warning: No test-results.xml found in $artifact_dir"
+              fi
+
+              if [ -f "$html_file" ]; then
+                cp "$html_file" "combined-results/${artifact_name}.html"
+                echo "Copied: $html_file -> combined-results/${artifact_name}.html"
+              else
+                echo "Warning: No test-results.html found in $artifact_dir"
+              fi
+            fi
+          done
+
+      - name: Results
+        if: ${{ always() && github.event_name == 'workflow_dispatch' }}
+        uses: pmeier/pytest-results-action@v0.7.1
+        with:
+          path: combined-results/*.xml
+          summary: true
+          fail-on-empty: true
+          title: FW Test Results - ${{ inputs.device }}
+
+      - name: Upload combined test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: combined-test-results-${{ github.run_number }}
+          retention-days: 7
+          path: combined-results/
