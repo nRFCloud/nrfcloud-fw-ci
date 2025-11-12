@@ -123,6 +123,7 @@ def perform_any_fota(dut_fota, bundle_id, timeout=CLOUD_TIMEOUT):
         timeout
     )
 
+@pytest.mark.fota
 def test_coap_mfw_delta_fota(dut_fota, coap_fota_hex_file):
     '''
     Test that verifies that device can connect to nRF Cloud CoAP and perform MFW delta FOTA update.
@@ -153,6 +154,7 @@ def test_coap_mfw_delta_fota(dut_fota, coap_fota_hex_file):
         CLOUD_TIMEOUT
     )
 
+@pytest.mark.fota
 def test_rest_mfw_delta_fota(dut_fota, rest_fota_hex_file):
     '''
     Test that verifies that device can connect to nRF Cloud REST and perform MFW delta FOTA update.
@@ -181,6 +183,7 @@ def test_rest_mfw_delta_fota(dut_fota, rest_fota_hex_file):
         CLOUD_TIMEOUT
     )
 
+@pytest.mark.fota
 @pytest.mark.slow
 def test_coap_mfw_full_fota(dut_fota, coap_fota_fmfu_hex_file):
     '''
@@ -212,7 +215,7 @@ def test_coap_mfw_full_fota(dut_fota, coap_fota_fmfu_hex_file):
         CLOUD_TIMEOUT
     )
 
-
+@pytest.mark.fota
 @pytest.mark.slow
 def test_rest_mfw_full_fota(dut_fota, rest_fota_fmfu_hex_file):
     '''
@@ -242,6 +245,7 @@ def test_rest_mfw_full_fota(dut_fota, rest_fota_fmfu_hex_file):
         CLOUD_TIMEOUT
     )
 
+@pytest.mark.fota
 def test_coap_app_fota(dut_fota, coap_fota_hex_file, coap_fota_test_zip_file):
     '''
     Test that verifies that device can connect to nRF Cloud CoAP and perform application FOTA update.
@@ -267,6 +271,7 @@ def test_coap_app_fota(dut_fota, coap_fota_hex_file, coap_fota_test_zip_file):
     if "1.0.0-fotatest" not in dut_fota.uart.whole_log:
         raise RuntimeError("Couldn't verify that correct APP is running after FOTA")
 
+@pytest.mark.fota
 def test_rest_app_fota(dut_fota, rest_fota_hex_file, rest_fota_test_zip_file):
     '''
     Test that verifies that device can connect to nRF Cloud REST and perform application FOTA update.
