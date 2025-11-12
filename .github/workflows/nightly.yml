@@ -29,23 +29,6 @@ jobs:
     outputs:
       commit: ${{ steps.get-commit.outputs.commit }}
     steps:
-      - name: Get latest commit from sdk-nrf
-        shell: bash
-        id: get-commit
-        run: |
-          if [ -z "${{ inputs.ncs-commit }}" ] || [ "${{ inputs.ncs-commit }}" == "main" ]; then
-            echo "Fetching latest commit from main branch"
-            COMMIT=$(git ls-remote https://github.com/nrfconnect/sdk-nrf.git HEAD | awk '{print $1}')
-            echo "commit=$COMMIT" >> $GITHUB_OUTPUT
-            echo "Latest sdk-nrf commit: $COMMIT"
-          elif [ -z "${{ inputs.ncs-commit }}" ] || [ "${{ inputs.ncs-commit }}" == "stable" ]; then
-            COMMIT=a80dbf92c265f5e3ad8e0a474c6dff39bc9dcb14
-            echo "commit=$COMMIT" >> $GITHUB_OUTPUT
-            echo "Using known-good commit: $COMMIT"
-          else
-            echo "Using specified commit: ${{ inputs.ncs-commit }}"
-            echo "commit=${{ inputs.ncs-commit }}" >> $GITHUB_OUTPUT
-          fi
       - name: Display Run Details
         if: github.event_name == 'workflow_dispatch' }}
         # The serial number is set by a pre-job script in .env file on the local actions-runner directory
@@ -53,8 +36,25 @@ jobs:
           echo "# Parameters" >> $GITHUB_STEP_SUMMARY
           echo "* Stage: ${{ inputs.stage }}" >> $GITHUB_STEP_SUMMARY
           echo "* Requested NCS Version: ${{ inputs.ncs-commit }}" >> $GITHUB_STEP_SUMMARY
-          echo "* Used NCS Commit: ${{ steps.get-commit.outputs.commit }}" >> $GITHUB_STEP_SUMMARY
           echo "* Recover Device: ${{ inputs.recover_device }}" >> $GITHUB_STEP_SUMMARY
+      - name: Get latest commit from sdk-nrf
+        shell: bash
+        id: get-commit
+        run: |
+          if [ -z "${{ inputs.ncs-commit }}" ] || [ "${{ inputs.ncs-commit }}" == "main" ]; then
+            echo "Fetching latest commit from main branch"
+            COMMIT=$(git ls-remote https://github.com/nrfconnect/sdk-nrf.git HEAD | awk '{print $1}')
+            echo "Latest sdk-nrf commit: $COMMIT"
+          elif [ -z "${{ inputs.ncs-commit }}" ] || [ "${{ inputs.ncs-commit }}" == "stable" ]; then
+            COMMIT=a80dbf92c265f5e3ad8e0a474c6dff39bc9dcb14
+            echo "Using known-good commit: $COMMIT"
+          else
+            COMMIT=${{ inputs.ncs-commit }}
+            echo "Using specified commit: ${{ inputs.ncs-commit }}"
+          fi
+          echo "commit=${{ inputs.ncs-commit }}" >> $GITHUB_OUTPUT
+          echo "* Used NCS Commit: $COMMIT >> $GITHUB_STEP_SUMMARY
+
 
   on-target-test:
     needs: get-ncs-commit
