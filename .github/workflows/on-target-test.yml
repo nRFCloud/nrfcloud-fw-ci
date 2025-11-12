@@ -37,6 +37,11 @@ on:
         type: string
         required: false
         default: "not slow"
+      show_run_details:
+        description: 'Show run details in summary'
+        type: boolean
+        required: false
+        default: false
   workflow_dispatch:
     inputs:
       stage:
@@ -68,6 +73,11 @@ on:
         type: string
         required: false
         default: "not slow"
+      show_run_details:
+        description: 'Show run details in summary'
+        type: boolean
+        required: false
+        default: true
 
 jobs:
   build:
@@ -118,7 +128,7 @@ jobs:
           echo ARTIFACT_VERSION=$(basename $PWD | cut -d'-' -f2-6) >> $GITHUB_ENV
 
       - name: Display Run Details
-        if: ${{ github.event_name == 'workflow_dispatch' && !github.event.workflow }}
+        if: ${{ inputs.show_run_details }}
         # The serial number is set by a pre-job script in .env file on the local actions-runner directory
         run: |
           echo "# Parameters" >> $GITHUB_STEP_SUMMARY
@@ -218,7 +228,7 @@ jobs:
           done
 
       - name: Results
-        if: ${{ always() && github.event_name == 'workflow_dispatch' && !github.event.workflow}}
+        if: ${{ always() }}
         uses: pmeier/pytest-results-action@v0.7.1
         with:
           path: nrf-cloud-fw-ci/tests/on_target/results/*.xml
