@@ -30,7 +30,7 @@ jobs:
       commit: ${{ steps.get-commit.outputs.commit }}
     steps:
       - name: Display Run Details
-        if: github.event_name == 'workflow_dispatch' }}
+        if: ${{ github.event_name == 'workflow_dispatch' }}
         # The serial number is set by a pre-job script in .env file on the local actions-runner directory
         run: |
           echo "# Parameters" >> $GITHUB_STEP_SUMMARY
