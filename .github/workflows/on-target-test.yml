@@ -229,8 +229,8 @@ jobs:
             bash scripts/encrypt_file.sh "$file" && rm "$file"
           done
 
-      - name: Results
-        if: ${{ always() }}
+      - name: Test Report
+        if: ${{ always() && inputs.show_run_details }}
         uses: pmeier/pytest-results-action@v0.7.1
         with:
           path: nrf-cloud-fw-ci/tests/on_target/results/*.xml

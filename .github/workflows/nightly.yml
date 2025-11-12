@@ -125,7 +125,7 @@ jobs:
           path: combined-results/*.xml
           summary: true
           fail-on-empty: true
-          title: FW Test Results - ${{ inputs.device }}
+          title: FW Test Results
 
       - name: Upload combined test results
         if: always()
