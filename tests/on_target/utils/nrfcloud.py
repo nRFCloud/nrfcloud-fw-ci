@@ -360,6 +360,34 @@ class NRFCloudFOTA(NRFCloud):
             params["pageNextToken"] = pageNextToken
         return self._get("/fota-jobs", params=params)
 
+    def list_mfw_bundles(self, pageLimit=100, pageNextToken=None) -> dict:
+        params = {"pageLimit": pageLimit, "modemOnly": "true"}
+        if pageNextToken:
+            params["pageNextToken"] = pageNextToken
+        return self._get("/firmwares", params=params)
+
+    def get_mfw_bundle_by_name(self, name: str) -> dict:
+        pageNextToken = None
+        while True:
+            bundles = self.list_mfw_bundles(pageLimit=100, pageNextToken=pageNextToken)
+            for bundle in bundles["items"]:
+                if bundle["name"] == name:
+                    return bundle['bundleId']
+            if "pageNextToken" in bundles:
+                pageNextToken = bundles["pageNextToken"]
+            else:
+                break
+        raise NRFCloudFOTAError(f"Modem firmware bundle with name '{name}' not found")
+
+    def get_mfw_delta_bundle_id(self, current_version, new_version):
+        new_version_truncated = new_version.split("_")[-1]
+        current_version_truncated = current_version.split("_")[-1]
+        return self.get_mfw_bundle_by_name(f"MFW delta: {current_version_truncated} to {new_version_truncated}")
+
+    def get_mfw_full_bundle_id(self, new_version):
+        new_version_truncated = new_version.split("_")[-1]
+        return self.get_mfw_bundle_by_name(f"MFW full: {new_version_truncated}")
+
     def delete_fota_job(self, job_id: str):
         return self._delete(f"/fota-jobs/{job_id}")
 
