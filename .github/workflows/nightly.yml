@@ -63,7 +63,7 @@ jobs:
       fail-fast: false
       matrix:
         device: [thingy91x, thingy91, nrf9160dk, nrf9151dk]
-        group: [coap, rest]
+        group: [coap, rest, mqtt]
     uses: ./.github/workflows/on-target-test.yml
     with:
       stage: ${{ inputs.stage || 'prod' }}
