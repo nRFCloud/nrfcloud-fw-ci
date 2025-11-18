@@ -186,6 +186,38 @@ def test_rest_mfw_delta_fota(dut_fota, rest_fota_hex_file):
     )
 
 @pytest.mark.fota
+@pytest.mark.rest
+def test_mqtt_mfw_delta_fota(dut_fota, mqtt_fota_hex_file):
+    '''
+    Test that verifies that device can connect to nRF Cloud mqtt and perform MFW delta FOTA update.
+    '''
+
+    setup_fota_sample(dut_fota, mqtt_fota_hex_file)
+
+    dut_fota.uart.wait_for_str("nrf_cloud_mqtt_fota: Connection to nRF Cloud ready")
+
+    current_version = parse_mfw_version_from_log(dut_fota.uart.whole_log)
+
+    if not current_version:
+        raise RuntimeError(f"Failed to find current modem FW version")
+
+    if current_version in supported_mfw_versions:
+        new_version = supported_mfw_versions[current_version]["new_version_delta"]
+        bundle_id = dut_fota.fota.get_mfw_delta_bundle_id(current_version, new_version)
+    else:
+        raise RuntimeError(f"Unexpected starting modem FW version: {current_version}")
+
+    perform_any_fota(dut_fota, bundle_id)
+
+    logger.info("Verifying new modem FW version...")
+    await_nrfcloud(
+        functools.partial(get_modemversion, dut_fota),
+        new_version,
+        "modemFirmware",
+        CLOUD_TIMEOUT
+    )
+
+@pytest.mark.fota
 @pytest.mark.coap
 @pytest.mark.slow
 def test_coap_mfw_full_fota(dut_fota, coap_fota_fmfu_hex_file):
@@ -250,6 +282,39 @@ def test_rest_mfw_full_fota(dut_fota, rest_fota_fmfu_hex_file):
     )
 
 @pytest.mark.fota
+@pytest.mark.mqtt
+@pytest.mark.slow
+def test_mqtt_mfw_full_fota(dut_fota, mqtt_fota_fmfu_hex_file):
+    '''
+    Test that verifies that device can connect to nRF Cloud mqtt and perform MFW full FOTA update.
+    '''
+
+    setup_fota_sample(dut_fota, mqtt_fota_fmfu_hex_file)
+
+    dut_fota.uart.wait_for_str("nrf_cloud_mqtt_fota: Connection to nRF Cloud ready")
+
+    current_version = parse_mfw_version_from_log(dut_fota.uart.whole_log)
+
+    if not current_version:
+        raise RuntimeError(f"Failed to find current modem FW version")
+
+    if current_version in supported_mfw_versions:
+        new_version = supported_mfw_versions[current_version]["new_version_full"]
+        bundle_id = dut_fota.fota.get_mfw_full_bundle_id(new_version)
+    else:
+        raise RuntimeError(f"Unexpected starting modem FW version: {current_version}")
+
+    perform_any_fota(dut_fota, bundle_id, timeout=FMFU_TIMEOUT)
+
+    logger.info("Verifying new modem FW version...")
+    await_nrfcloud(
+        functools.partial(get_modemversion, dut_fota),
+        new_version,
+        "modemFirmware",
+        CLOUD_TIMEOUT
+    )
+
+@pytest.mark.fota
 @pytest.mark.coap
 def test_coap_app_fota(dut_fota, coap_fota_hex_file, coap_fota_test_zip_file):
     '''
@@ -290,6 +355,33 @@ def test_rest_app_fota(dut_fota, rest_fota_hex_file, rest_fota_test_zip_file):
     )
 
     setup_fota_sample(dut_fota, rest_fota_hex_file)
+
+    try:
+        perform_any_fota(dut_fota, bundle_id)
+    except Exception as e:
+        raise e
+    finally:
+        dut_fota.fota.delete_bundle(bundle_id)
+
+    if "1.0.0-fotatest" not in dut_fota.uart.whole_log:
+        raise RuntimeError("Couldn't verify that correct APP is running after FOTA")
+
+@pytest.mark.fota
+@pytest.mark.mqtt
+def test_mqtt_app_fota(dut_fota, mqtt_fota_hex_file, mqtt_fota_test_zip_file):
+    '''
+    Test that verifies that device can connect to nRF Cloud mqtt and perform application FOTA update.
+    '''
+
+    bundle_id = dut_fota.fota.upload_zephyr_zip(
+        zip_path=mqtt_fota_test_zip_file,
+        version="1.0.0-fotatest",
+        name=ARTIFACT_VERSION
+    )
+
+    setup_fota_sample(dut_fota, mqtt_fota_hex_file)
+
+    dut_fota.uart.wait_for_str("nrf_cloud_mqtt_fota: Connection to nRF Cloud ready")
 
     try:
         perform_any_fota(dut_fota, bundle_id)
