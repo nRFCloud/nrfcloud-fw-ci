@@ -124,11 +124,20 @@ def test_mqtt_device_message(dut_cloud, mqtt_device_message_hex_file):
         logger.debug(f"Found messages: {messages}")
 
         if messages:
-            message_object = messages[0][1]
-            message_content = message_object.get('data', '')
+            for timestamp, message_object in messages:
+                if message_object.get('appId') == 'sample_message':
+                    message_content = message_object.get('data', '')
+                    logger.debug(f"Found sample_message with data: {message_content}")
 
-            if "Hello World, from the MQTT Device Message Sample!" in message_content:
-                break
+                    if "Hello World, from the MQTT Device Message Sample!" in message_content:
+                        logger.debug("Found matching message!")
+                        break
+            else:
+                # No matching message found in this batch, continue polling
+                logger.debug("No matching message found in batch, retrying...")
+                continue
+            # Break out of while loop if we found the message
+            break
         else:
             logger.debug("No message with recent timestamp, retrying...")
             continue
