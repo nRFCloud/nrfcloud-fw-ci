@@ -4,3 +4,4 @@ tests/on_target/artifacts
 tests/on_target/outcomes
 tests/on_target/results
 .vscode/
+*.pyc
