@@ -170,7 +170,7 @@ jobs:
         working-directory: nrf-cloud-fw-ci
         run: |
           if [[ "${{ inputs.device }}" == "thingy91x" ]]; then
-            python3 tests/on_target/utils/nrf91_flasher.py -e -u ${{ env.RUNNER_SERIAL_NUMBER }} --program provision_device/t91x-nrf91-bl.hex --modem provision_device/mfw_nrf91x1_2.0.3.zip
+            python3 tests/on_target/utils/nrf91_flasher.py -e -u ${{ env.RUNNER_SERIAL_NUMBER }} --program provision_device/t91x-nrf91-bl.hex --modem provision_device/mfw_nrf91x1_2.0.1.zip
             python3 tests/on_target/utils/nrf91_flasher.py -u ${{ env.RUNNER_SERIAL_NUMBER }} --program provision_device/t91x-atclient-apponly.hex
             nrfcredstore $(realpath "/dev/serial/by-id/usb-Nordic_Semiconductor_Thingy:91_X_UART_${{ env.RUNNER_SERIAL_NUMBER }}-if01") list
           fi
@@ -186,7 +186,7 @@ jobs:
           fi
           if [[ "${{ inputs.device }}" == "nrf9151dk" ]]; then
             nrfutil device recover --serial-number ${{ env.RUNNER_SERIAL_NUMBER }}
-            nrfutil device program --serial-number ${{ env.RUNNER_SERIAL_NUMBER }} --firmware provision_device/mfw_nrf91x1_2.0.3.zip
+            nrfutil device program --serial-number ${{ env.RUNNER_SERIAL_NUMBER }} --firmware provision_device/mfw_nrf91x1_2.0.1.zip
             nrfutil device program --serial-number ${{ env.RUNNER_SERIAL_NUMBER }} --firmware provision_device/nrf9151dk_at_client_2025-08-14_6c6e5b32.hex
             nrfutil device reset --serial-number ${{ env.RUNNER_SERIAL_NUMBER }}
           fi

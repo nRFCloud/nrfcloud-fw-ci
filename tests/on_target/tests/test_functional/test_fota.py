@@ -33,21 +33,21 @@ supported_mfw_versions = {
         "new_version_delta" : "mfw_nrf9160_1.3.7",
         "new_version_full" : "mfw_nrf9160_1.3.6",
     },
+    "mfw_nrf91x1_2.0.1" : {
+        "new_version_delta" : "mfw_nrf91x1_2.0.1-FOTA-TEST",
+        "new_version_full" : "mfw_nrf91x1_2.0.2",
+    },
+    "mfw_nrf91x1_2.0.1-FOTA-TEST" : {
+        "new_version_delta" : "mfw_nrf91x1_2.0.1",
+        "new_version_full" : "mfw_nrf91x1_2.0.2",
+    },
     "mfw_nrf91x1_2.0.2" : {
         "new_version_delta" : "mfw_nrf91x1_2.0.2-FOTA-TEST",
-        "new_version_full" : "mfw_nrf91x1_2.0.3",
+        "new_version_full" : "mfw_nrf91x1_2.0.1",
     },
     "mfw_nrf91x1_2.0.2-FOTA-TEST" : {
         "new_version_delta" : "mfw_nrf91x1_2.0.2",
-        "new_version_full" : "mfw_nrf91x1_2.0.3",
-    },
-    "mfw_nrf91x1_2.0.3" : {
-        "new_version_delta" : "mfw_nrf91x1_2.0.3-FOTA-TEST",
-        "new_version_full" : "mfw_nrf91x1_2.0.2",
-    },
-    "mfw_nrf91x1_2.0.3-FOTA-TEST" : {
-        "new_version_delta" : "mfw_nrf91x1_2.0.3",
-        "new_version_full" : "mfw_nrf91x1_2.0.2",
+        "new_version_full" : "mfw_nrf91x1_2.0.1",
     },
 }
 
