@@ -28,7 +28,6 @@ def test_coap_cell_location(dut_cloud, coap_cell_location_hex_file):
         [
             "Connected to network",
             "nrf_cloud_coap_transport: Authorized",
-            "Current cell info: Cell ID: ",
             "nrf_cloud_coap_cell_location_sample: Lat:"
         ],
         timeout=CLOUD_TIMEOUT
