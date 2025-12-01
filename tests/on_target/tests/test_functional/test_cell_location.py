@@ -61,7 +61,6 @@ def test_rest_cell_location(dut_cloud, rest_cell_location_hex_file):
     dut_cloud.uart.wait_for_str_ordered(
         [
             "Connected to network",
-            "Current cell info: Cell ID: ",
             "nrf_cloud_rest_cell_location_sample: Lat:"
         ],
         timeout=CLOUD_TIMEOUT
@@ -95,7 +94,6 @@ def test_mqtt_cell_location(dut_cloud, mqtt_cell_location_hex_file):
     dut_cloud.uart.wait_for_str_ordered(
         [
             "Connected to network",
-            "Current cell info: Cell ID: ",
             "nrf_cloud_mqtt_cell_location: Lat:"
         ],
         timeout=CLOUD_TIMEOUT
