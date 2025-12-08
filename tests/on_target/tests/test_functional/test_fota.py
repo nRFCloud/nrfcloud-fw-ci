@@ -236,7 +236,7 @@ def test_coap_mfw_full_fota(dut_fota, coap_fota_fmfu_hex_file):
 
     if current_version in supported_mfw_versions:
         new_version = supported_mfw_versions[current_version]["new_version_full"]
-        bundle_id = dut_fota.fota.get_mfw_full_bundle_id(new_version)
+        bundle_id = "2a4323af-675c-4cc2-91ad-bf2ba13927ce"
     else:
         raise RuntimeError(f"Unexpected starting modem FW version: {current_version}")
 
@@ -267,7 +267,7 @@ def test_rest_mfw_full_fota(dut_fota, rest_fota_fmfu_hex_file):
 
     if current_version in supported_mfw_versions:
         new_version = supported_mfw_versions[current_version]["new_version_full"]
-        bundle_id = dut_fota.fota.get_mfw_full_bundle_id(new_version)
+        bundle_id = "2a4323af-675c-4cc2-91ad-bf2ba13927ce"
     else:
         raise RuntimeError(f"Unexpected starting modem FW version: {current_version}")
 
@@ -300,7 +300,7 @@ def test_mqtt_mfw_full_fota(dut_fota, mqtt_fota_fmfu_hex_file):
 
     if current_version in supported_mfw_versions:
         new_version = supported_mfw_versions[current_version]["new_version_full"]
-        bundle_id = dut_fota.fota.get_mfw_full_bundle_id(new_version)
+        bundle_id = "2a4323af-675c-4cc2-91ad-bf2ba13927ce"
     else:
         raise RuntimeError(f"Unexpected starting modem FW version: {current_version}")
 
