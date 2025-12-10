@@ -42,7 +42,7 @@ jobs:
             COMMIT=$(git ls-remote https://github.com/nrfconnect/sdk-nrf.git HEAD | awk '{print $1}')
             echo "Latest sdk-nrf commit: $COMMIT"
           elif [ -z "${{ inputs.ncs-commit }}" ] || [ "${{ inputs.ncs-commit }}" == "stable" ]; then
-            COMMIT=a80dbf92c265f5e3ad8e0a474c6dff39bc9dcb14
+            COMMIT=4035b457da2f881fb6ba7493ce375057af872fda
             echo "Using known-good commit: $COMMIT"
           else
             COMMIT=${{ inputs.ncs-commit }}
