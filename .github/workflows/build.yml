@@ -4,7 +4,6 @@ permissions:
   contents: read
   id-token: write  # Only if you use OIDC for authentication
 
-
 on:
   workflow_dispatch:
     inputs:
@@ -56,17 +55,14 @@ on:
         value: ${{ jobs.build.outputs.run_id }}
       version:
         description: The version of the firmware built on this run_id
-        value: ${{ jobs.build.outputs.version }}
+        value: ${{ jobs.get-cached-artifacts.outputs.version }}
 
 jobs:
-  build:
-    runs-on: build_self_hosted
-    container: ghcr.io/zephyrproject-rtos/ci:v0.27.4
-    env:
-      CMAKE_PREFIX_PATH: /opt/toolchains
+  get-cached-artifacts:
+    runs-on: ubuntu-latest
     outputs:
-      run_id: ${{ github.run_id }}
-      version: ${{ env.VERSION }}
+      version: ${{ steps.set-version.outputs.version }}
+      cache-hit: ${{ steps.check-s3-cache.outputs.cache-hit }}
     steps:
       - name: Checkout CI
         uses: actions/checkout@v4
@@ -84,11 +80,76 @@ jobs:
         working-directory: nrf-cloud-fw-ci
         run: echo "BUILD_WORKFLOW_SHA=$(sha256sum .github/workflows/build.yml | cut -c1-8)" >> $GITHUB_ENV
 
-      - name: Set VERSION environment variable
+      - name: create version string
         working-directory: nrf
+        id: set-version
         run: |
           NRFSDK_SHA=$(git rev-parse HEAD)
-          echo "VERSION=build-${{ env.BUILD_WORKFLOW_SHA }}-$NRFSDK_SHA-${{ inputs.stage }}-${{ inputs.device }}-${{ inputs.group }}" >> $GITHUB_ENV
+          echo "version=build-${{ env.BUILD_WORKFLOW_SHA }}-$NRFSDK_SHA-${{ inputs.stage }}-${{ inputs.device }}-${{ inputs.group }}" >> $GITHUB_OUTPUT
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: eu-north-1
+          role-duration-seconds: 3600  # 1 hour
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/ci-s3-access
+
+      - name: Try downloading cached artifacts
+        id: check-s3-cache
+        env:
+          VERSION: ${{ steps.set-version.outputs.version }}
+          S3_BUCKET: nrfcloud-fw-ci-build-cache
+        run: |
+          # Try to download cached artifacts from S3
+          echo "Checking for cached build: $VERSION"
+          
+          if aws s3 ls "s3://$S3_BUCKET/$VERSION.zip" 2>/dev/null; then
+            echo "Found cached artifacts in S3, downloading..."
+            aws s3 cp "s3://$S3_BUCKET/$VERSION.zip" "$VERSION.zip"
+            
+            # Extract the zip file
+            mkdir -p artifacts
+            unzip -q "$VERSION.zip" -d artifacts
+            
+            echo "cache-hit=true" >> $GITHUB_OUTPUT
+            echo "Successfully downloaded and extracted cached artifacts"
+          else
+            echo "No cached artifacts found in S3"
+            echo "cache-hit=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Upload cached artifacts to GitHub Actions
+        if: steps.check-s3-cache.outputs.cache-hit == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.set-version.outputs.version }}
+          path: artifacts
+          retention-days: 7
+      
+  build:
+    needs: get-cached-artifacts
+    if: needs.get-cached-artifacts.outputs.cache-hit != 'true'
+    runs-on: build_self_hosted
+    container: ghcr.io/zephyrproject-rtos/ci:v0.27.4
+    env:
+      CMAKE_PREFIX_PATH: /opt/toolchains
+    outputs:
+      run_id: ${{ github.run_id }}
+    steps:
+      - name: Set VERSION variable
+        run: echo "VERSION=${{ needs.get-cached-artifacts.outputs.version }}" >> $GITHUB_ENV
+
+      - name: Checkout CI
+        uses: actions/checkout@v4
+        with:
+          path: nrf-cloud-fw-ci
+
+      - name: Checkout NRF
+        uses: actions/checkout@v4
+        with:
+          repository: nrfconnect/sdk-nrf
+          ref: ${{ inputs.ncs-commit }}
+          path: nrf
 
       - name: Check if build exists in cache
         id: cache-check
@@ -356,11 +417,36 @@ jobs:
           path: ${{ env.VERSION }}/artifacts
           retention-days: 7
 
-
-      # copy artifacts to cache, make sure only 100 builds are cached at the same time
-      - name: Cache Artifacts
-        if: steps.cache-check.outputs.cache-hit == 'false'
+  upload-to-s3:
+    needs: [get-cached-artifacts, build]
+    if: needs.get-cached-artifacts.outputs.cache-hit != 'true'
+    runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ needs.get-cached-artifacts.outputs.version }}
+      S3_BUCKET: nrfcloud-fw-ci-build-cache
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: eu-north-1
+          role-duration-seconds: 3600  # 1 hour
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/ci-s3-access
+      
+      - name: Download artifacts from build
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.VERSION }}
+          path: artifacts
+      
+      - name: Upload artifacts to S3
         run: |
-          mkdir -p artifact-cache
-          ls -dt artifact-cache/*/ 2>/dev/null | tail -n +100 | xargs -d '\n' rm -rf -- 2>/dev/null || true
-          cp -r $VERSION/artifacts artifact-cache/$VERSION
+          # Create zip file from artifacts
+          cd artifacts
+          zip -r "../$VERSION.zip" .
+          cd ..
+          
+          # Upload to S3
+          echo "Uploading $VERSION.zip to S3..."
+          aws s3 cp "$VERSION.zip" "s3://$S3_BUCKET/$VERSION.zip"
+          
+          echo "Successfully uploaded artifacts to S3: s3://$S3_BUCKET/$VERSION.zip"
