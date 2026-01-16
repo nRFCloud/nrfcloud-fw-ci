@@ -52,7 +52,7 @@ on:
     outputs:
       run_id:
         description: The run ID of the workflow to fetch artifacts from
-        value: ${{ jobs.build.outputs.run_id }}
+        value: ${{ jobs.get-cached-artifacts.outputs.run_id }}
       version:
         description: The version of the firmware built on this run_id
         value: ${{ jobs.get-cached-artifacts.outputs.version }}
@@ -63,6 +63,7 @@ jobs:
     outputs:
       version: ${{ steps.set-version.outputs.version }}
       cache-hit: ${{ steps.check-s3-cache.outputs.cache-hit }}
+      run_id: ${{ github.run_id }}
     steps:
       - name: Checkout CI
         uses: actions/checkout@v4
@@ -133,8 +134,6 @@ jobs:
     container: ghcr.io/zephyrproject-rtos/ci:v0.27.4
     env:
       CMAKE_PREFIX_PATH: /opt/toolchains
-    outputs:
-      run_id: ${{ github.run_id }}
     steps:
       - name: Set VERSION variable
         run: echo "VERSION=${{ needs.get-cached-artifacts.outputs.version }}" >> $GITHUB_ENV
