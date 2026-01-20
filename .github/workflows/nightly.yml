@@ -76,7 +76,7 @@ jobs:
     secrets: inherit
 
   create-report:
-    needs: on-target-test
+    needs: [on-target-test, get-ncs-commit]
     runs-on: ubuntu-24.04
     if: always()
     steps:
