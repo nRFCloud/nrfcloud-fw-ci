@@ -190,6 +190,7 @@ jobs:
             pip install -e $MATTER_IDL_PATH
           fi
           pip install -r nrf/scripts/requirements-build.txt
+          pip install memfault-cli
           rm -rf artifacts
           mkdir -p artifacts
 
@@ -337,19 +338,22 @@ jobs:
           export MEMFAULT_PROJECT_KEY=${{ secrets.MEMFAULT_PROJECT_KEY }}
           # Thingy:91 X
           if [[ "${{ inputs.device }}" == "thingy91x" ]]; then
-            west build -b thingy91x/nrf9151/ns --build-dir $VERSION/thingy91x-memfault_sample nrf/samples/debug/memfault -- -DCONFIG_MEMFAULT_NCS_PROJECT_KEY=\"$MEMFAULT_PROJECT_KEY\" '-DEXTRA_CONF_FILE=overlay-modem-trace-to-memfault.conf;overlay-etb.conf;overlay-memfault.conf'
-          fi
+            west build -b thingy91x/nrf9151/ns --build-dir $VERSION/thingy91x-memfault_sample nrf/samples/debug/memfault -- -DCONFIG_MEMFAULT_NCS_PROJECT_KEY=\"$MEMFAULT_PROJECT_KEY\" '-DEXTRA_CONF_FILE=overlay-modem-trace-to-memfault.conf;overlay-etb.conf'
+            memfault --org-token ${{ secrets.MEMFAULT_ORGANIZATION_TOKEN }} --org ${{ vars.MEMFAULT_ORGANIZATION_SLUG }} --project ${{ vars.MEMFAULT_PROJECT_SLUG }} upload-mcu-symbols --check-uploaded $VERSION/thingy91x-memfault_sample/build/memfault/zephyr/zephyr.elf
           # Thingy:91
           if [[ "${{ inputs.device }}" == "thingy91" ]]; then
-            west build -b thingy91/nrf9160/ns --build-dir $VERSION/thingy91-memfault_sample nrf/samples/debug/memfault -- -DCONFIG_MEMFAULT_NCS_PROJECT_KEY=\"$MEMFAULT_PROJECT_KEY\" '-DEXTRA_CONF_FILE=overlay-modem-trace-to-memfault.conf;overlay-etb.conf;overlay-memfault.conf'
+            west build -b thingy91/nrf9160/ns --build-dir $VERSION/thingy91-memfault_sample nrf/samples/debug/memfault -- -DCONFIG_MEMFAULT_NCS_PROJECT_KEY=\"$MEMFAULT_PROJECT_KEY\" '-DEXTRA_CONF_FILE=overlay-modem-trace-to-memfault.conf;overlay-etb.conf'
+            memfault --org-token ${{ secrets.MEMFAULT_ORGANIZATION_TOKEN }} --org ${{ vars.MEMFAULT_ORGANIZATION_SLUG }} --project ${{ vars.MEMFAULT_PROJECT_SLUG }} upload-mcu-symbols --check-uploaded $VERSION/thingy91-memfault_sample/build/memfault/zephyr/zephyr.elf
           fi
           # nRF9160-DK
           if [[ "${{ inputs.device }}" == "nrf9160dk" ]]; then
-            west build -b nrf9160dk/nrf9160/ns --build-dir $VERSION/nrf9160dk-memfault_sample nrf/samples/debug/memfault -- -DCONFIG_MEMFAULT_NCS_PROJECT_KEY=\"$MEMFAULT_PROJECT_KEY\" '-DEXTRA_CONF_FILE=overlay-modem-trace-to-memfault.conf;overlay-etb.conf;overlay-memfault.conf'
+            west build -b nrf9160dk/nrf9160/ns --build-dir $VERSION/nrf9160dk-memfault_sample nrf/samples/debug/memfault -- -DCONFIG_MEMFAULT_NCS_PROJECT_KEY=\"$MEMFAULT_PROJECT_KEY\" '-DEXTRA_CONF_FILE=overlay-modem-trace-to-memfault.conf;overlay-etb.conf'
+            memfault --org-token ${{ secrets.MEMFAULT_ORGANIZATION_TOKEN }} --org ${{ vars.MEMFAULT_ORGANIZATION_SLUG }} --project ${{ vars.MEMFAULT_PROJECT_SLUG }} upload-mcu-symbols --check-uploaded $VERSION/nrf9160dk-memfault_sample/build/memfault/zephyr/zephyr.elf
           fi
           # nRF9151-DK
           if [[ "${{ inputs.device }}" == "nrf9151dk" ]]; then
-            west build -b nrf9151dk/nrf9151/ns --build-dir $VERSION/nrf9151dk-memfault_sample nrf/samples/debug/memfault -- -DCONFIG_MEMFAULT_NCS_PROJECT_KEY=\"$MEMFAULT_PROJECT_KEY\" '-DEXTRA_CONF_FILE=overlay-modem-trace-to-memfault.conf;overlay-etb.conf;overlay-memfault.conf'
+            west build -b nrf9151dk/nrf9151/ns --build-dir $VERSION/nrf9151dk-memfault_sample nrf/samples/debug/memfault -- -DCONFIG_MEMFAULT_NCS_PROJECT_KEY=\"$MEMFAULT_PROJECT_KEY\" '-DEXTRA_CONF_FILE=overlay-modem-trace-to-memfault.conf;overlay-etb.conf'
+            memfault --org-token ${{ secrets.MEMFAULT_ORGANIZATION_TOKEN }} --org ${{ vars.MEMFAULT_ORGANIZATION_SLUG }} --project ${{ vars.MEMFAULT_PROJECT_SLUG }} upload-mcu-symbols --check-uploaded $VERSION/nrf9151dk-memfault_sample/build/memfault/zephyr/zephyr.elf
           fi
 
       - name: Build MSS COAP
