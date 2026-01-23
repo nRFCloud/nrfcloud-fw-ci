@@ -330,6 +330,27 @@ jobs:
             west build -b nrf9151dk/nrf9151/ns --build-dir $VERSION/nrf9151dk-nrf_cloud_mqtt_fota_fmfu             nrf/samples/cellular/nrf_cloud_mqtt_fota            -- -DEXTRA_CONF_FILE="full_modem_fota.conf;$MQTT_SERVER_FRAGMENT" -Dnrf_cloud_mqtt_fota_SNIPPET=nrf91-modem-trace-uart
           fi
 
+      - name: Build Memfault sample
+        if: inputs.group == 'memfault' && steps.cache-check.outputs.cache-hit == 'false'
+        shell: bash
+        run: |
+          # Thingy:91 X
+          if [[ "${{ inputs.device }}" == "thingy91x" ]]; then
+            west build -b thingy91x/nrf9151/ns --build-dir $VERSION/thingy91x-memfault_sample nrf/samples/debug/memfault -- -D'CONFIG_MEMFAULT_NCS_PROJECT_KEY="{{ secrets.MEMFAULT_PROJECT_KEY }}"' '-DEXTRA_CONF_FILE=overlay-modem-trace-to-memfault.conf;overlay-etb.conf'
+          fi
+          # Thingy:91
+          if [[ "${{ inputs.device }}" == "thingy91" ]]; then
+            west build -b thingy91/nrf9160/ns --build-dir $VERSION/thingy91-memfault_sample nrf/samples/debug/memfault -- -D'CONFIG_MEMFAULT_NCS_PROJECT_KEY="{{ secrets.MEMFAULT_PROJECT_KEY }}"' '-DEXTRA_CONF_FILE=overlay-modem-trace-to-memfault.conf;overlay-etb.conf'
+          fi
+          # nRF9160-DK
+          if [[ "${{ inputs.device }}" == "nrf9160dk" ]]; then
+            west build -b nrf9160dk/nrf9160/ns --build-dir $VERSION/nrf9160dk-memfault_sample nrf/samples/debug/memfault -- -D'CONFIG_MEMFAULT_NCS_PROJECT_KEY="{{ secrets.MEMFAULT_PROJECT_KEY }}"' '-DEXTRA_CONF_FILE=overlay-modem-trace-to-memfault.conf;overlay-etb.conf'
+          fi
+          # nRF9151-DK
+          if [[ "${{ inputs.device }}" == "nrf9151dk" ]]; then
+            west build -b nrf9151dk/nrf9151/ns --build-dir $VERSION/nrf9151dk-memfault_sample nrf/samples/debug/memfault -- -D'CONFIG_MEMFAULT_NCS_PROJECT_KEY="{{ secrets.MEMFAULT_PROJECT_KEY }}"' '-DEXTRA_CONF_FILE=overlay-modem-trace-to-memfault.conf;overlay-etb.conf'
+          fi
+
       - name: Build MSS COAP
         if: inputs.group == 'mss-coap' && steps.cache-check.outputs.cache-hit == 'false'
         shell: bash
