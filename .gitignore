@@ -5,3 +5,4 @@ tests/on_target/outcomes
 tests/on_target/results
 .vscode/
 *.pyc
+.DS_Store
