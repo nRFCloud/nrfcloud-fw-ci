@@ -34,6 +34,7 @@ cp $BUILD_DIR/$SAMPLE_NAME/zephyr/.config $TARGET_DIR/app-dotconfig.txt
 cp $BUILD_DIR/$SAMPLE_NAME/zephyr/.config.sysbuild $TARGET_DIR/app-dotconfig.sysbuild.txt
 cp $BUILD_DIR/$SAMPLE_NAME/zephyr/zephyr.signed.hex $TARGET_DIR
 cp $BUILD_DIR/$SAMPLE_NAME/zephyr/zephyr.dts $TARGET_DIR
+cp $BUILD_DIR/$SAMPLE_NAME/zephyr/zephyr.elf $TARGET_DIR
 cp $BUILD_DIR/$SAMPLE_NAME/zephyr/log_dictionary.json $TARGET_DIR
 
 exit 0
