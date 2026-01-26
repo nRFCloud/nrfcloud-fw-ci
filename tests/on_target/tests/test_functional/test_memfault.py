@@ -77,7 +77,7 @@ def check_upload(uart, device_id, family, start_time):
     # Check that the new upload is less than 10 mins old
     new_upload = new_uploads[0]
     max_age = timedelta(minutes=10)
-    now = datetime.datetime.now(datetime.timezone.utc)
+    now = datetime.now(datetime.timezone.utc)
     assert timestamp(new_upload) > (now - max_age)
 
 
