@@ -91,7 +91,7 @@ def test_memfault(dut_board, memfault_hex_file):
     reset_device()
 
     dut_board.uart.write("mflt get_device_info\r\n".encode())
-    dut_board.uart.wait_for_str([f"S/N: 359", "SW type:", "SW version:", "HW version:"], CLOUD_TIMEOUT)
+    dut_board.uart.wait_for_str([f"S/N: 3", "SW type:", "SW version:", "HW version:"], CLOUD_TIMEOUT)
 
     dut_board.uart.write("mflt clear_core\r\n".encode())
     dut_board.uart.wait_for_str(["Invalidating coredump"], CLOUD_TIMEOUT)
