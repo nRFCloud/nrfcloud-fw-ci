@@ -204,6 +204,10 @@ jobs:
           ARTIFACT_VERSION: ${{ env.ARTIFACT_VERSION }}
           BASEURL: ${{ env.NRFCLOUD_URL }}
           STAGE: ${{ inputs.stage }}
+          MEMFAULT_ORGANIZATION_SLUG: ${{ vars.MEMFAULT_ORGANIZATION_SLUG }}
+          MEMFAULT_PROJECT_SLUG: ${{ vars.MEMFAULT_PROJECT_SLUG }}
+          MEMFAULT_ORGANIZATION_TOKEN: ${{ secrets.MEMFAULT_ORGANIZATION_TOKEN }}
+          MEMFAULT_PROJECT_KEY: ${{ secrets.MEMFAULT_PROJECT_KEY }}
         run: |
           rm -rf results outcomes || true
           mkdir -p results

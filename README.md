@@ -106,6 +106,10 @@ export ARTIFACT_VERSION=b82e6864-a80dbf92c265f5e3ad8e0a474c6dff39bc9dcb14-prod-n
 export BASEURL=nrfcloud.com
 export RUNNER_DEVICE_TYPE=nrf9151dk
 export STAGE=prod
+export MEMFAULT_ORGANIZATION_SLUG=smooth-corp
+export MEMFAULT_PROJECT_SLUG=cool-project
+export MEMFAULT_ORGANIZATION_TOKEN=oat_123abc
+export MEMFAULT_PROJECT_KEY=20384asd21
 
 pytest -v --junit-xml=results/test-results.xml --html=results/test-results.html --self-contained-html tests/test_functional
 ```

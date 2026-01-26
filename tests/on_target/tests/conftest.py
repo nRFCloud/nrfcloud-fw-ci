@@ -16,6 +16,7 @@ UART_TIMEOUT = 60 * 30
 SEGGER = os.getenv('SEGGER')
 UART_ID = os.getenv('UART_ID', SEGGER)
 DEVICE_UUID = os.getenv('UUID')
+DEVICE_IMEI = os.getenv('IMEI')
 NRFCLOUD_API_KEY = os.getenv('NRFCLOUD_API_KEY')
 RUNNER_DEVICE_TYPE = os.getenv('RUNNER_DEVICE_TYPE')
 ARTIFACT_PATH = os.getenv('ARTIFACT_PATH')
@@ -69,7 +70,8 @@ def dut_board(request):
 
     yield types.SimpleNamespace(
         uart=uart,
-        device_type=RUNNER_DEVICE_TYPE
+        device_type=RUNNER_DEVICE_TYPE,
+        imei=DEVICE_IMEI
     )
 
     uart_log = uart.whole_log

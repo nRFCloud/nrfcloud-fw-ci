@@ -14,7 +14,6 @@ CLOUD_TIMEOUT = 60 * 10
 FMFU_TIMEOUT = 60 * 60
 
 ARTIFACT_VERSION = os.getenv('ARTIFACT_VERSION')
-APP_BUNDLEID = os.getenv("APP_BUNDLEID", None)
 
 supported_mfw_versions = {
     "mfw_nrf9160_1.3.6" : {
@@ -82,7 +81,6 @@ def setup_fota_sample(dut_fota, hex_file):
     dut_fota.uart.xfactoryreset()
     dut_fota.uart.flush()
 
-    test_start_time = time.time()
     reset_device()
 
     dut_fota.uart.wait_for_str_ordered(
