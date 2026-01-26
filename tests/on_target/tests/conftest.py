@@ -200,3 +200,7 @@ def mqtt_fota_test_zip_file():
         if os.path.isfile(potential_path):
             return potential_path
     pytest.skip("ZIP file not found")
+
+@pytest.fixture(scope="session")
+def memfault_hex_file():
+    return find_hex_file("memfault_sample") or pytest.skip("HEX file not found")
