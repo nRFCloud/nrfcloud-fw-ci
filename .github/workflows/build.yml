@@ -190,6 +190,7 @@ jobs:
             pip install -e $MATTER_IDL_PATH
           fi
           pip install -r nrf/scripts/requirements-build.txt
+          pip install jsonschema
           rm -rf artifacts
           mkdir -p artifacts
 
