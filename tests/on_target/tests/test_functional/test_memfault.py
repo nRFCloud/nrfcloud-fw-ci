@@ -34,7 +34,7 @@ def timestamp(upload):
 
     # Instruct memfault library to create and upload either event, coredump, log
 def check_upload(uart, device_id, family, start_time):
-    latest_uploads = get_latest(family, device_id)
+    latest_uploads = get_latest(family, device_id, start_time)
     if latest_uploads:
         timestamp_old_upload = timestamp(latest_uploads[0])
     else:
@@ -63,7 +63,7 @@ def check_upload(uart, device_id, family, start_time):
     start = time.time()
     while time.time() - start < CLOUD_TIMEOUT:
         time.sleep(5)
-        new_uploads = get_latest(family, device_id)
+        new_uploads = get_latest(family, device_id, start_time)
         if not new_uploads:
             continue
         # Check that we have an upload with newer timestamp
