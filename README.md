@@ -96,6 +96,7 @@ To do, you will need the build artifact, a python environment and some env. vari
 python3 -mvenv tests/on_target/.env
 source tests/on_target/.env/bin/activate
 cd tests/on_target
+pip3 install -r requirements.txt
 export SEGGER=960033027
 export UUID=50343956-3037-4738-800d-1f29e0a0f7bf
 export NRFCLOUD_API_KEY=$API_KEY_PROD

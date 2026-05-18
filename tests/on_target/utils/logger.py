@@ -19,6 +19,19 @@ LOG_PREFIX_COLOR = os.getenv("LOG_PREFIX_COLOR")
 
 LOG_DIR = "outcomes"
 
+
+class LiveFileHandler(logging.FileHandler):
+    """File handler that flushes and fsyncs every record for live tailing."""
+
+    def emit(self, record):
+        super().emit(record)
+        if self.stream and hasattr(self.stream, "fileno"):
+            try:
+                os.fsync(self.stream.fileno())
+            except OSError:
+                # Some filesystems may not support fsync; flush is still applied.
+                pass
+
 def get_logger(log_level = LOG_LEVEL):
     caller = inspect.stack()[1]
     filename = caller.filename
@@ -42,7 +55,7 @@ def get_logger(log_level = LOG_LEVEL):
     if LOG_FILENAME:
         os.makedirs(LOG_DIR, exist_ok=True)
         for level in ["debug"]:
-            file_handler = logging.FileHandler(f"{LOG_DIR}/{LOG_FILENAME}_{level}.txt")
+            file_handler = LiveFileHandler(f"{LOG_DIR}/{LOG_FILENAME}_{level}.txt")
             file_handler.setLevel(level.upper())
             logger.addHandler(file_handler)
             formatter = '%(asctime)s:%(module)s:%(levelname)s:%(message)s'

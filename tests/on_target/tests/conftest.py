@@ -2,6 +2,7 @@ import os
 import re
 import pytest
 import types
+import platform
 from utils.flash_tools import recover_device
 from utils.uart import Uart, UartBinary
 import sys
@@ -21,10 +22,16 @@ RUNNER_DEVICE_TYPE = os.getenv('RUNNER_DEVICE_TYPE')
 ARTIFACT_PATH = os.getenv('ARTIFACT_PATH')
 STAGE = os.getenv('STAGE')
 
+AT_PORT_INDEX = 0
 TRACEPORT_INDEX = 1
 
 if RUNNER_DEVICE_TYPE == "nrf9160dk":
     TRACEPORT_INDEX = 2
+
+if RUNNER_DEVICE_TYPE == "nrf93m1dk":
+    TRACEPORT_INDEX = 0
+    AT_PORT_INDEX = 1
+
 
 if RUNNER_DEVICE_TYPE in ["thingy91", "thingy91x"]:
     HEX_FILE_NAME = "zephyr.signed.hex"
@@ -35,7 +42,10 @@ def pytest_itemcollected(item):
     item._nodeid = f"{RUNNER_DEVICE_TYPE}::{STAGE}::{item._nodeid}"
 
 def get_uarts():
-    base_path = "/dev/serial/by-id"
+    if platform.system() == 'Darwin':
+        base_path = "/dev/"
+    else:
+        base_path = "/dev/serial/by-id"
     try:
         serial_paths = [os.path.join(base_path, entry) for entry in os.listdir(base_path)]
     except (FileNotFoundError, PermissionError) as e:
@@ -63,7 +73,7 @@ def dut_board(request):
     all_uarts = get_uarts()
     if not all_uarts:
         pytest.fail("No UARTs found")
-    log_uart_string = all_uarts[0]
+    log_uart_string = all_uarts[AT_PORT_INDEX]
     uart = Uart(log_uart_string, timeout=UART_TIMEOUT)
     modem_traces_uart = UartBinary(all_uarts[TRACEPORT_INDEX], timeout=UART_TIMEOUT)
 

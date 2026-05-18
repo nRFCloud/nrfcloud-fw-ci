@@ -179,7 +179,7 @@ class Uart:
         return len(self.log)
 
     def wait_for_str_ordered(
-        self, msgs: list, error_msg: str = "", timeout: int = DEFAULT_WAIT_FOR_STR_TIMEOUT
+        self, msgs: list, error_msg: str = "", timeout: int = DEFAULT_WAIT_FOR_STR_TIMEOUT, start=0
     ) -> None:
         start_t = time.time()
         while True:
@@ -187,7 +187,7 @@ class Uart:
             pos = 0
             for msg in msgs:
                 try:
-                    pos = self.log.index(msg, pos)
+                    pos = self.log[start:].index(msg, pos)
                 except ValueError:
                     missing = msg
                     break
