@@ -66,12 +66,12 @@ jobs:
       run_id: ${{ github.run_id }}
     steps:
       - name: Checkout CI
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           path: nrf-cloud-fw-ci
 
       - name: Checkout NRF
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: nrfconnect/sdk-nrf
           ref: ${{ inputs.ncs-commit }}
@@ -89,7 +89,7 @@ jobs:
           echo "version=build-${{ env.BUILD_WORKFLOW_SHA }}-$NRFSDK_SHA-${{ inputs.stage }}-${{ inputs.device }}-${{ inputs.group }}" >> $GITHUB_OUTPUT
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v5
         with:
           aws-region: eu-north-1
           role-duration-seconds: 3600  # 1 hour
@@ -139,12 +139,12 @@ jobs:
         run: echo "VERSION=${{ needs.get-cached-artifacts.outputs.version }}" >> $GITHUB_ENV
 
       - name: Checkout CI
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           path: nrf-cloud-fw-ci
 
       - name: Checkout NRF
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: nrfconnect/sdk-nrf
           ref: ${{ inputs.ncs-commit }}
@@ -322,7 +322,7 @@ jobs:
       S3_BUCKET: nrfcloud-fw-ci-build-cache
     steps:
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v5
         with:
           aws-region: eu-north-1
           role-duration-seconds: 3600  # 1 hour
