@@ -103,7 +103,7 @@ jobs:
         - /run/udev:/run/udev
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           path: nrf-cloud-fw-ci
 
@@ -112,7 +112,7 @@ jobs:
           rm -rf nrf-cloud-fw-ci/tests/on_target/artifacts || true
 
       - name: Download artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           path: nrf-cloud-fw-ci/tests/on_target/artifacts
           run-id: ${{ needs.build.outputs.run_id }}
@@ -240,7 +240,7 @@ jobs:
 
       - name: Create Report Artifact
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         id: artifact-report
         with:
           name: test-report-${{ env.ARTIFACT_VERSION }}

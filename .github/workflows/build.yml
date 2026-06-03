@@ -66,12 +66,12 @@ jobs:
       run_id: ${{ github.run_id }}
     steps:
       - name: Checkout CI
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           path: nrf-cloud-fw-ci
 
       - name: Checkout NRF
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: nrfconnect/sdk-nrf
           ref: ${{ inputs.ncs-commit }}
@@ -103,15 +103,15 @@ jobs:
         run: |
           # Try to download cached artifacts from S3
           echo "Checking for cached build: $VERSION"
-          
+
           if aws s3 ls "s3://$S3_BUCKET/$VERSION.zip" 2>/dev/null; then
             echo "Found cached artifacts in S3, downloading..."
             aws s3 cp "s3://$S3_BUCKET/$VERSION.zip" "$VERSION.zip"
-            
+
             # Extract the zip file
             mkdir -p artifacts
             unzip -q "$VERSION.zip" -d artifacts
-            
+
             echo "cache-hit=true" >> $GITHUB_OUTPUT
             echo "Successfully downloaded and extracted cached artifacts"
           else
@@ -121,12 +121,12 @@ jobs:
 
       - name: Upload cached artifacts to GitHub Actions
         if: steps.check-s3-cache.outputs.cache-hit == 'true'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ steps.set-version.outputs.version }}
           path: artifacts
           retention-days: 7
-      
+
   build:
     needs: get-cached-artifacts
     if: needs.get-cached-artifacts.outputs.cache-hit != 'true'
@@ -139,12 +139,12 @@ jobs:
         run: echo "VERSION=${{ needs.get-cached-artifacts.outputs.version }}" >> $GITHUB_ENV
 
       - name: Checkout CI
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           path: nrf-cloud-fw-ci
 
       - name: Checkout NRF
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: nrfconnect/sdk-nrf
           ref: ${{ inputs.ncs-commit }}
@@ -307,7 +307,7 @@ jobs:
           done
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ env.VERSION }}
           path: ${{ env.VERSION }}/artifacts
@@ -322,27 +322,27 @@ jobs:
       S3_BUCKET: nrfcloud-fw-ci-build-cache
     steps:
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v5
+        uses: aws-actions/configure-aws-credentials@v6
         with:
           aws-region: eu-north-1
           role-duration-seconds: 3600  # 1 hour
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/ci-s3-access
-      
+
       - name: Download artifacts from build
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: ${{ env.VERSION }}
           path: artifacts
-      
+
       - name: Upload artifacts to S3
         run: |
           # Create zip file from artifacts
           cd artifacts
           zip -r "../$VERSION.zip" .
           cd ..
-          
+
           # Upload to S3
           echo "Uploading $VERSION.zip to S3..."
           aws s3 cp "$VERSION.zip" "s3://$S3_BUCKET/$VERSION.zip"
-          
+
           echo "Successfully uploaded artifacts to S3: s3://$S3_BUCKET/$VERSION.zip"
