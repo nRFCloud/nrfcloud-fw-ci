@@ -51,13 +51,14 @@ def check_for_handshake(uart):
 
 def cell_location(uart):
     log_index = len(uart.log)
-    uart.at_cmd_write("AT%NRFCLOUDLOCATION=1,1")
+    uart.write("AT%NRFCLOUDLOCATION=1,1\r\n")
     check_for_handshake(uart)
     uart.wait_for_str_ordered(
         [
             "%COAP: RESPONSE,2.05",
             "%COAP: DATA,HEX,",
-            "%NRFCLOUDLOCATION: 6"
+            "%NRFCLOUDLOCATION: 6",
+            "OK"
         ],
         timeout=CLOUD_TIMEOUT,
         start=log_index
@@ -65,11 +66,12 @@ def cell_location(uart):
 
 def cloud_message(uart):
     log_index = len(uart.log)
-    uart.at_cmd_write('AT%NRFCLOUDMESSAGE={"appId":"BUTTON","data":"1"}')
+    uart.write('AT%NRFCLOUDMESSAGE={"appId":"BUTTON","data":"1"}\r\n')
     check_for_handshake(uart)
     uart.wait_for_str_ordered(
         [
-            "%NRFCLOUDMESSAGE: SENT"
+            "%NRFCLOUDMESSAGE: SENT",
+            "OK"
         ],
         timeout=CLOUD_TIMEOUT,
         start=log_index
@@ -77,11 +79,12 @@ def cloud_message(uart):
 
 def shadow_set(uart):
     log_index = len(uart.log)
-    uart.at_cmd_write('AT%NRFCLOUDSHADOW=config.switch,true')
+    uart.write('AT%NRFCLOUDSHADOW=config.switch,true\r\n')
     check_for_handshake(uart)
     uart.wait_for_str_ordered(
         [
-            "%COAP: RESPONSE,2.04"
+            "%COAP: RESPONSE,2.04",
+            "OK"
         ],
         timeout=CLOUD_TIMEOUT,
         start=log_index
@@ -122,7 +125,13 @@ def test_nrf93m1_various(dut_cloud):
     shadow_set(dut_cloud.uart)
 
     dut_cloud.uart.at_cmd_write("AT+CFUN=0")
-
     wait_until_online(dut_cloud.uart)
-
     cell_location(dut_cloud.uart)
+
+    dut_cloud.uart.at_cmd_write("AT+CFUN=0")
+    wait_until_online(dut_cloud.uart)
+    cloud_message(dut_cloud.uart)
+
+    dut_cloud.uart.at_cmd_write("AT+CFUN=0")
+    wait_until_online(dut_cloud.uart)
+    shadow_set(dut_cloud.uart)
