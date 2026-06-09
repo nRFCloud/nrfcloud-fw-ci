@@ -317,7 +317,7 @@ jobs:
             NS="$build_dir/merged_${BOARD_NAME}_ns.hex"
 
             if [ -f "$S" ] && [ -f "$NS" ]; then
-              python3 "$MERGEHEX" -o "$build_dir/merged.hex" "$S" "$NS"
+              python3 "$MERGEHEX" --overlap replace -o "$build_dir/merged.hex" "$S" "$NS"
             elif [ -f "$NS" ]; then
               cp "$NS" "$build_dir/merged.hex"
             elif [ -f "$S" ]; then
