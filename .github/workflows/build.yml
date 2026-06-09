@@ -297,6 +297,36 @@ jobs:
             west build -b nrf9151dk/nrf9151/ns --build-dir $VERSION/nrf9151dk-nrf_cloud_mqtt_fota_fmfu             nrf/samples/cellular/nrf_cloud_mqtt_fota            -- -DEXTRA_CONF_FILE="full_modem_fota.conf;$MQTT_SERVER_FRAGMENT" -Dnrf_cloud_mqtt_fota_SNIPPET=nrf91-modem-trace-uart -DSB_CONFIG_MERGED_HEX_FILES=y
           fi
 
+      - name: Merge hex files
+        if: steps.cache-check.outputs.cache-hit == 'false'
+        shell: bash
+        run: |
+          case "${{ inputs.device }}" in
+            thingy91)   BOARD_NAME="thingy91_nrf9160"  ;;
+            thingy91x)  BOARD_NAME="thingy91x_nrf9151" ;;
+            nrf9160dk)  BOARD_NAME="nrf9160dk_nrf9160" ;;
+            nrf9151dk)  BOARD_NAME="nrf9151dk_nrf9151" ;;
+            *) echo "Unknown device: ${{ inputs.device }}"; exit 1 ;;
+          esac
+
+          MERGEHEX=$(west topdir)/zephyr/scripts/build/mergehex.py
+
+          for build_dir in $VERSION/*; do
+            [ -d "$build_dir" ] || continue
+            S="$build_dir/merged_${BOARD_NAME}.hex"
+            NS="$build_dir/merged_${BOARD_NAME}_ns.hex"
+
+            if [ -f "$S" ] && [ -f "$NS" ]; then
+              python3 "$MERGEHEX" -o "$build_dir/merged.hex" "$S" "$NS"
+            elif [ -f "$NS" ]; then
+              cp "$NS" "$build_dir/merged.hex"
+            elif [ -f "$S" ]; then
+              cp "$S" "$build_dir/merged.hex"
+            else
+              echo "Warning: merged inputs not found in $build_dir, skipping"
+            fi
+          done
+
       - name: Create Artifact bundle
         if: steps.cache-check.outputs.cache-hit == 'false'
         run: |
