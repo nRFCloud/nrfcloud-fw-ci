@@ -315,8 +315,11 @@ jobs:
             [ -d "$build_dir" ] || continue
             S="$build_dir/merged_${BOARD_NAME}.hex"
             NS="$build_dir/merged_${BOARD_NAME}_ns.hex"
+            PROV="$build_dir/app_provision.hex"
 
-            if [ -f "$S" ] && [ -f "$NS" ]; then
+            if [ -f "$S" ] && [ -f "$NS" ] && [ -f "$PROV" ]; then
+              python3 "$MERGEHEX" --overlap replace -o "$build_dir/merged.hex" "$S" "$NS" "$PROV"
+            elif [ -f "$S" ] && [ -f "$NS" ]; then
               python3 "$MERGEHEX" --overlap replace -o "$build_dir/merged.hex" "$S" "$NS"
             elif [ -f "$NS" ]; then
               cp "$NS" "$build_dir/merged.hex"
