@@ -114,7 +114,8 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v8
         with:
-          path: nrf-cloud-fw-ci/tests/on_target/artifacts
+          name: ${{ needs.build.outputs.version }}
+          path: nrf-cloud-fw-ci/tests/on_target/artifacts/${{ needs.build.outputs.version }}
           run-id: ${{ needs.build.outputs.run_id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -122,10 +123,10 @@ jobs:
         working-directory: nrf-cloud-fw-ci
         shell: bash
         run: |
-          cd tests/on_target/artifacts/build-*-${{ inputs.device }}-${{ inputs.group }}
+          cd "tests/on_target/artifacts/${{ needs.build.outputs.version }}"
           ls -l
           echo ARTIFACT_PATH=$PWD >> $GITHUB_ENV
-          echo ARTIFACT_VERSION=$(basename $PWD | cut -d'-' -f2-6) >> $GITHUB_ENV
+          echo ARTIFACT_VERSION=$(basename "$PWD" | cut -d'-' -f2-) >> $GITHUB_ENV
 
       - name: Display Run Details
         if: ${{ inputs.show_run_details }}
