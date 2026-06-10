@@ -304,7 +304,7 @@ jobs:
           case "${{ inputs.device }}" in
             thingy91)   BOARD_NAME="thingy91_nrf9160"  ;;
             thingy91x)  BOARD_NAME="thingy91x_nrf9151" ;;
-            nrf9160dk)  BOARD_NAME="nrf9160dk_nrf9160" ;;
+            nrf9160dk)  BOARD_NAME="nrf9160dk_0_14_0_nrf9160" ;;
             nrf9151dk)  BOARD_NAME="nrf9151dk_nrf9151" ;;
             *) echo "Unknown device: ${{ inputs.device }}"; exit 1 ;;
           esac
