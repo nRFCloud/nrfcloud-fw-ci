@@ -37,10 +37,13 @@ jobs:
         shell: bash
         id: get-commit
         run: |
-          if [ -z "${{ inputs.ncs-commit }}" ] || [ "${{ inputs.ncs-commit }}" == "main" ]; then
-            echo "Fetching latest commit from main branch"
-            COMMIT=$(git ls-remote https://github.com/nrfconnect/sdk-nrf.git HEAD | awk '{print $1}')
+          if [ -z "${{ inputs.ncs-commit }}" ] || [ "${{ inputs.ncs-commit }}" == "lts" ]; then
+            echo "Fetching latest commit from lts branch"
+            COMMIT=$(git ls-remote https://github.com/nrfconnect/sdk-nrf.git v3.4-branch | awk '{print $1}')
             echo "Latest sdk-nrf commit: $COMMIT"
+          elif [ -z "${{ inputs.ncs-commit }}" ] || [ "${{ inputs.ncs-commit }}" == "main" ]; then
+            COMMIT=$(git ls-remote https://github.com/nrfconnect/sdk-nrf.git HEAD | awk '{print $1}')
+            echo "Using known-good commit: $COMMIT"
           elif [ -z "${{ inputs.ncs-commit }}" ] || [ "${{ inputs.ncs-commit }}" == "stable" ]; then
             COMMIT=4035b457da2f881fb6ba7493ce375057af872fda
             echo "Using known-good commit: $COMMIT"
