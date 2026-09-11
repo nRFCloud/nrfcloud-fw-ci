@@ -29,6 +29,14 @@ class NRFCloudFOTAError(Exception):
 
 BASEURL = os.getenv('BASEURL', "nrfcloud.com")
 
+def parse_cloud_time(value):
+    for fmt in ("%Y-%m-%dT%H:%M:%S.%fZ", "%Y-%m-%dT%H:%M:%SZ"):
+        try:
+            return datetime.strptime(value, fmt)
+        except ValueError:
+            pass
+    raise ValueError(f"Unsupported timestamp format: {value}")
+
 class NRFCloud():
     def __init__(self, api_key: str, url: str=f"https://api.{BASEURL}/v1", timeout: int=10) -> None:
         """ Initalizes the class """
@@ -160,7 +168,7 @@ class NRFCloud():
         if appname:
             params['appId'] = appname
 
-        timestamp = lambda x: datetime.strptime(x['receivedAt'], self.time_fmt)
+        timestamp = lambda x: parse_cloud_time(x['receivedAt'])
         messages = self._get(path="/messages", params=params)
 
         return [(timestamp(x), x['message'])
