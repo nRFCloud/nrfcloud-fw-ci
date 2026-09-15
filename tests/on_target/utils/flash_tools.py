@@ -7,11 +7,16 @@ import subprocess
 import os
 import sys
 import glob
+import time
 sys.path.append(os.getcwd())
 from utils.logger import get_logger
 from utils.nrf91_flasher import nrf91_flasher
+from pyocd.core.exceptions import TransferFaultError
 
 logger = get_logger()
+
+RESET_RETRIES = 3
+RESET_RETRY_DELAY_S = 2
 
 SEGGER = os.getenv('SEGGER')
 RUNNER_DEVICE_TYPE = os.getenv('RUNNER_DEVICE_TYPE')
@@ -39,7 +44,20 @@ def recover_device(serial=SEGGER):
         recover_device_pyocd(serial)
 
 def reset_device_pyocd(serial=SEGGER):
-    nrf91_flasher(uid=serial)
+    # The device may be mid-write to internal flash (e.g. an in-progress FOTA
+    # download) when a reset is requested, which can make pyOCD's memory
+    # access to the target fault transiently. Retry a few times before giving up.
+    for attempt in range(1, RESET_RETRIES + 1):
+        try:
+            nrf91_flasher(uid=serial)
+            return
+        except TransferFaultError as e:
+            if attempt == RESET_RETRIES:
+                raise
+            logger.warning(
+                f"pyOCD transfer fault while resetting device (attempt {attempt}/{RESET_RETRIES}): {e}. Retrying..."
+            )
+            time.sleep(RESET_RETRY_DELAY_S)
 
 def flash_device_pyocd(hexfile, serial=SEGGER):
     nrf91_flasher(uid=serial, program=hexfile)
