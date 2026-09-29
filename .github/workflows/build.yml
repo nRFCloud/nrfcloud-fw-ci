@@ -59,7 +59,7 @@ on:
 
 jobs:
   get-cached-artifacts:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     outputs:
       version: ${{ steps.set-version.outputs.version }}
       cache-hit: ${{ steps.check-s3-cache.outputs.cache-hit }}
@@ -349,7 +349,7 @@ jobs:
   upload-to-s3:
     needs: [get-cached-artifacts, build]
     if: needs.get-cached-artifacts.outputs.cache-hit != 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     env:
       VERSION: ${{ needs.get-cached-artifacts.outputs.version }}
       S3_BUCKET: nrfcloud-fw-ci-build-cache
