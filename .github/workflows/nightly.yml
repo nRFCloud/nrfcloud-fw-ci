@@ -84,6 +84,9 @@ jobs:
     runs-on: ubuntu-26.04
     if: always()
     steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
       - name: Download all test reports
         uses: actions/download-artifact@v8
         with:
