@@ -1,6 +1,7 @@
 name: On-Target Tests
 permissions:
   actions: read
+  checks: write
   contents: read
   id-token: write  # Only if you use OIDC for authentication
 
@@ -231,13 +232,15 @@ jobs:
           done
 
       - name: Test Report
-        if: ${{ always() && inputs.show_run_details }}
-        uses: pmeier/pytest-results-action@v0.7.1
+        if: ${{ !cancelled() && inputs.show_run_details }}
+        uses: dorny/test-reporter@v3
         with:
+          name: FW Test Results - ${{ inputs.device }}
           path: nrf-cloud-fw-ci/tests/on_target/results/*.xml
-          summary: true
+          reporter: python-xunit
+          use-actions-summary: true
+          report-title: FW Test Results - ${{ inputs.device }}
           fail-on-empty: true
-          title: FW Test Results - ${{ inputs.device }}
 
       - name: Create Report Artifact
         if: always()

@@ -1,6 +1,7 @@
 name: Nightly Tests
 permissions:
   actions: read
+  checks: write
   contents: read
   id-token: write  # Only if you use OIDC for authentication
 
@@ -122,13 +123,15 @@ jobs:
           done
 
       - name: Results
-        if: ${{ always() }}
-        uses: pmeier/pytest-results-action@v0.7.1
+        if: ${{ !cancelled() }}
+        uses: dorny/test-reporter@v3
         with:
+          name: FW Test Results
           path: combined-results/*.xml
-          summary: true
+          reporter: python-xunit
+          use-actions-summary: true
+          report-title: FW Test Results
           fail-on-empty: true
-          title: FW Test Results
 
       - name: Upload combined test results
         if: always()
