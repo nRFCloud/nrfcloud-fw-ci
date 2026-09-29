@@ -30,7 +30,7 @@ on:
 
 jobs:
   get-ncs-commit:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     outputs:
       commit: ${{ steps.get-commit.outputs.commit }}
     steps:
@@ -81,7 +81,7 @@ jobs:
 
   create-report:
     needs: [on-target-test, get-ncs-commit]
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     if: always()
     steps:
       - name: Download all test reports
